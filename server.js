@@ -22,14 +22,16 @@ const index = require('./routes/index');
 /**
  * TODO: include books and authors route
  */
-
+const booksRouter = require('./routes/books.js');
+const authorsRouter = require('./routes/authors.js') 
 /* TODO: End */
 
 app.use('/', index)
 /**
  * TODO: use books and authors route
  */
-
+app.use('/books', booksRouter);
+app.use('/authors', authorsRouter);
 /* TODO: End */
 
 
