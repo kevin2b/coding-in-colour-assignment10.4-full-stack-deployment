@@ -29,10 +29,14 @@ router.get('/', (req, res) => { // Get all books
 router.get('/:id', (req, res) => { // Get one book by ID
   try {
     // TODO.. 
-
+    const book = books.find((book) => book.id.toString() === req.params.id);
+    if (!book){
+      return res.status(404).json({"error": "Book Not Found"});
+    }
+    return res.json(book);
   } catch (error) {
     // TODO.. 
-
+    return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
