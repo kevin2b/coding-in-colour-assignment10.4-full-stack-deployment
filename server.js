@@ -4,6 +4,7 @@ const port = 3000;
 const cors = require('cors');
 // add necessary imports below: Morgan and endPointNotFound
 const morgan = require('morgan');
+const {endPointNotFound} = require('./utils/middlewares.js');
 
 // Enable CORS for all routes and methods
 app.use(cors());
@@ -35,7 +36,7 @@ app.use('/', index)
 /**
  * TODO: apply unknown endpoints (endPointNotFound) middleware
  */
-
+app.use(endPointNotFound);
 /* TODO: End */
 
 
