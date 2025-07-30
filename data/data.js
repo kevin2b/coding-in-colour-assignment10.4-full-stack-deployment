@@ -5,6 +5,11 @@ const books = [
     { id: 2, name: 'When Breath Becomes Air', price: 15.0, author_id: 2 }
 ];
 
+let nextBookId = 3;
+
+const getAndUpdateNextBookId = () => {return nextBookId++;};
+const setBooks = (books) => {books = this.books};
+
 let authors = [
     { id: 1, name: 'Arthur Conan Doyle' },
     { id: 2, name: 'Paul Kalanithi' },
@@ -14,4 +19,5 @@ let authors = [
 module.exports = {
     books,
     authors,
+    getAndUpdateNextBookId
 };

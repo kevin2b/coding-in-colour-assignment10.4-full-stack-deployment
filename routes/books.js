@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // access to books and authors arrays. You will need to use both here.
-const { books, authors } = require('../data/data');
+const { books, authors, getAndUpdateNextBookId } = require('../data/data');
 
 // The first get method is provided below.
 router.get('/', (req, res) => { // Get all books
@@ -54,10 +54,26 @@ router.get('/:id', (req, res) => { // Get one book by ID
 router.post('/', (req, res) => {   //  Add a new book
   try {
     // TODO.. 
+    const name = req.body.name;
+    const price = req.body.price;
+    const author_id = authors.some((author)=>{return req.body.author_id === author.id.toString()})? Number(req.body.author_id): 99;
 
+    //This is only basic check and does not account for NaN
+    if (!name || price === undefined || price === null || price === ""){
+      return res.status(400).json({"error": "Name or price missing"});
+    }
+
+    const book = {
+      id: getAndUpdateNextBookId(),
+      name,
+      price,
+      author_id
+    }
+    books.push(book);
+    res.status(201).json(book);
   } catch (error) {
     // TODO.. 
-
+    return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
@@ -69,10 +85,30 @@ router.post('/', (req, res) => {   //  Add a new book
 router.put('/:id', (req, res) => { // Update a book by ID
   try {
     // TODO.. 
+    const name = req.body.name;
+    const price = req.body.price;
+    const author_id = authors.some((author)=>{return req.body.author_id === author.id.toString()})? Number(req.body.author_id): 99;
+    const id = Number(req.params.id);
+    if(!books.some(book => book.id === id)){
+      return res.status(404).json({"error": "id not found"});
+    }
 
+    //This is only basic check
+    if (!name || price === undefined || price === null || price === ""){
+      return res.status(400).json({"error": "Name or price missing"});
+    }
+
+    const newBook = {
+      id,
+      name,
+      price,
+      author_id
+    }
+    books[books.findIndex((book) =>  book.id === newBook.id)] = newBook;
+    return res.status(200).json(newBook);
   } catch (error) {
     // TODO.. 
-
+    return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
@@ -84,10 +120,15 @@ router.put('/:id', (req, res) => { // Update a book by ID
 router.delete('/:id', (req, res) => { // Delete a book by ID
   try {
     // TODO.. 
-
+    const id = Number(req.params.id);
+    if(!books.some(book => book.id === id)){
+      return res.status(404).json({"error": "id not found"});
+    }
+    books.splice(books.findIndex((book) =>  book.id === id), 1);
+    return res.status(204).end();
   } catch (error) {
     // TODO.. 
-
+    return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
