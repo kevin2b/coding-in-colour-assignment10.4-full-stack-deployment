@@ -3,15 +3,17 @@ const app = express();
 const port = 3000;
 const cors = require('cors');
 // add necessary imports below: Morgan and endPointNotFound
+const morgan = require('morgan');
 
 // Enable CORS for all routes and methods
 app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
+
 /**
  * TODO: apply Morgan middleware (dev): https://expressjs.com/en/resources/middleware/morgan.html
  */
-
+app.use(morgan('dev'));
 /* TODO: End */
 
 
