@@ -8,7 +8,6 @@ const books = [
 let nextBookId = 3;
 
 const getAndUpdateNextBookId = () => {return nextBookId++;};
-const setBooks = (books) => {books = this.books};
 
 let authors = [
     { id: 1, name: 'Arthur Conan Doyle' },
@@ -16,8 +15,12 @@ let authors = [
     { id: 99, name: 'Anonymous' }
 ];
 
+let nextAuthorId = 3;
+const getAndUpdateNextAuthorId = () => {return nextAuthorId++;};
+
 module.exports = {
     books,
     authors,
-    getAndUpdateNextBookId
+    getAndUpdateNextBookId,
+    getAndUpdateNextAuthorId
 };

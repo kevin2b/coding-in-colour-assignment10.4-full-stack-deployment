@@ -1,0 +1,23 @@
+GET http://localhost:3000/authors
+
+###
+GET http://localhost:3000/authors/3
+
+###
+POST http://localhost:3000/authors
+Content-Type: application/json
+
+{
+  "name": "TestAuthor"
+}
+
+###
+PUT http://localhost:3000/authors/3
+Content-Type: application/json
+
+{
+  "name": "TestAuthorUpdated"
+}
+
+###
+DELETE http://localhost:3000/authors/3

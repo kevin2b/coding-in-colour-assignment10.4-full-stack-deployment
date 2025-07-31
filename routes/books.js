@@ -59,7 +59,7 @@ router.post('/', (req, res) => {   //  Add a new book
     const author_id = authors.some((author)=>{return req.body.author_id === author.id.toString()})? Number(req.body.author_id): 99;
 
     //This is only basic check and does not account for NaN
-    if (!name || price === undefined || price === null || price === ""){
+    if (!name|| !name.trim() || price === undefined || price === null || price === ""){
       return res.status(400).json({"error": "Name or price missing"});
     }
 
@@ -94,7 +94,7 @@ router.put('/:id', (req, res) => { // Update a book by ID
     }
 
     //This is only basic check
-    if (!name || price === undefined || price === null || price === ""){
+    if (!name|| !name.trim() || price === undefined || price === null || price === ""){
       return res.status(400).json({"error": "Name or price missing"});
     }
 
