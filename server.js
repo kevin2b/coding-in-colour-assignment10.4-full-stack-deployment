@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const cors = require('cors');
+const sequelize = require('./config/db.js');
 // add necessary imports below: Morgan and endPointNotFound
 const morgan = require('morgan');
 const {endPointNotFound} = require('./utils/middlewares.js');
@@ -46,8 +47,12 @@ app.use(endPointNotFound);
 module.exports = app;
 
 async function init() { // async for future additions below
-
-
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 
   if (require.main === module) {
     app.listen(port, () => {
