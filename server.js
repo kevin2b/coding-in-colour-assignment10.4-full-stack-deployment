@@ -52,6 +52,15 @@ async function init() { // async for future additions below
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
+    return;
+  }
+
+  try{
+    await sequelize.sync({ force: true });
+    console.log('Models (re)created!');
+  } catch (error) {
+    console.error('Unable to sync database:', error);
+    return;
   }
 
   if (require.main === module) {
