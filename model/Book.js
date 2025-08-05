@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db.js');
-const Author = require('./Author.js');
+const {Author} = require('./Author.js');
 
 const Book = sequelize.define('Book', {
   id: {
@@ -26,4 +26,4 @@ Book.belongsTo(Author, {
   foreignKey: 'author_id',
 });
 
-module.exports = Book;
+module.exports = {Book};

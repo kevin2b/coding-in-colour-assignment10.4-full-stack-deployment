@@ -16,4 +16,4 @@ const Author = sequelize.define('Author', {
   timestamps: false,
 });
 
-module.exports = Author;
+module.exports = {Author};

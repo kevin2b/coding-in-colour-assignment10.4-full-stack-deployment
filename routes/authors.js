@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // access to authors array
-const { authors, getAndUpdateNextAuthorId } = require('../data/data');
+const { Author } = require('../model/Author.js');
 
 /**
  * TODO: Use router to define all CRUD operations: 1- get all, 2- get by id, 3- post a new author, 4- update an author, and 5- delete an author.
@@ -16,17 +16,18 @@ const { authors, getAndUpdateNextAuthorId } = require('../data/data');
  */
 
 
-router.get('/', (req, res) => { // Get all authors
+router.get('/', async (req, res) => { // Get all authors
   try {
+    const authors = await Author.findAll();
     res.status(200).json(authors);
   } catch (error) {
     return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
-router.get('/:id', (req, res) => { // Get one author by ID
+router.get('/:id', async (req, res) => { // Get one author by ID
   try {
-    const author = authors.find((author) => author.id.toString() === req.params.id);
+    const author = await Author.findByPk(req.params.id);
     if (!author){
       return res.status(404).json({"error": "Author Not Found"});
     }
@@ -36,7 +37,7 @@ router.get('/:id', (req, res) => { // Get one author by ID
   }
 });
 
-router.post('/', (req, res) => {   //  Add a new author
+router.post('/', async (req, res) => {   //  Add a new author
   try {
     const name = req.body.name;
 
@@ -44,47 +45,46 @@ router.post('/', (req, res) => {   //  Add a new author
       return res.status(400).json({"error": "Name missing"});
     }
 
-    const author = {
-      id: getAndUpdateNextAuthorId(),
+    const author = await Author.create({
       name
-    }
-    authors.push(author);
+    });
+
     res.status(201).json(author);
   } catch (error) {
     return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
-router.put('/:id', (req, res) => { // Update a author by ID
+router.put('/:id', async (req, res) => { // Update a author by ID
   try {
     const name = req.body.name;
-    const id = Number(req.params.id);
-    if(!authors.some(author => author.id === id)){
-      return res.status(404).json({"error": "id not found"});
-    }
+    const id = req.params.id;
 
     if (!name|| !name.trim()){
       return res.status(400).json({"error": "Name missing"});
     }
 
-    const newAuthor = {
-      id,
-      name
+    const author = await Author.findByPk(id);
+    if(!author){
+      return res.status(404).json({"error": "id not found"});
     }
-    authors[authors.findIndex((author) =>  author.id === newAuthor.id)] = newAuthor;
-    return res.status(200).json(newAuthor);
+
+    author.name = name;
+    await author.save()
+
+    return res.status(200).json(author);
   } catch (error) {
     return res.status(500).json({"error": "Internal Server Error"});
   }
 });
 
-router.delete('/:id', (req, res) => { // Delete a author by ID
+router.delete('/:id', async (req, res) => { // Delete a author by ID
   try {
-    const id = Number(req.params.id);
-    if(!authors.some(author => author.id === id)){
+    const id = req.params.id;
+    const deleted = await Author.destroy({ where: { id } })
+    if(deleted === 0){
       return res.status(404).json({"error": "id not found"});
     }
-    authors.splice(authors.findIndex((author) =>  author.id === id), 1);
     return res.status(204).end();
   } catch (error) {
     return res.status(500).json({"error": "Internal Server Error"});
