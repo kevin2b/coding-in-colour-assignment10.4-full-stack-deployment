@@ -25,7 +25,8 @@
     "date-and-time": "^3.3.0",
     "dotenv": "^17.2.1",
     "express": "^4.19.2",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",
