@@ -63,11 +63,18 @@ router.post('/', async (req, res) => {   //  Add a new book
       return res.status(400).json({"error": "Name or price missing"});
     }
 
-    const author = await Author.findByPk(author_id);
+    let curr_author_id = ANONYMOUS_AUTHOR_ID;
+    if (author_id){
+      const author = await Author.findByPk(author_id);
+      if (author){
+        curr_author_id = author_id;
+      }
+    }
+
     const book = await Book.create({
       name: name.trim(),
       price,
-      author_id: author ? author_id: ANONYMOUS_AUTHOR_ID
+      author_id: curr_author_id,
     });
 
     res.status(201).json(book);

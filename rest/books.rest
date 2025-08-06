@@ -10,7 +10,7 @@ Content-Type: application/json
 {
   "name": "Test",
   "price": "10",
-  "author_id": "7"
+  "author_id": "7z"
 }
 
 ###
