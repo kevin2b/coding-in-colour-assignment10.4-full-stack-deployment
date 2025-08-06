@@ -56,7 +56,7 @@ async function init() { // async for future additions below
     return;
   }
 
-  if (process.env.TESTING !== "TRUE"){
+  if (process.env.TESTING.toLowerCase() !== "true"){
     try{
       await sequelize.sync({ force: true });
       console.log('Models (re)created!');

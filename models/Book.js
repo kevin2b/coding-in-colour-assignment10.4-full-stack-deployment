@@ -21,7 +21,9 @@ const Book = sequelize.define('Book', {
   timestamps: false,
 });
 
-Author.hasMany(Book);
+Author.hasMany(Book, {
+  foreignKey: 'author_id',
+});
 Book.belongsTo(Author, {
   foreignKey: 'author_id',
 });
