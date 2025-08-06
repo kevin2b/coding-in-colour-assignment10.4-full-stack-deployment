@@ -85,7 +85,7 @@ describe('Sequelize-backed Author & Book routes (no in-memory data allowed)', ()
         expect(res.body.price).toBe(8.0);
 
         const refetch = await Book.findByPk(book.id);
-        expect(refetch.price).toBe(8.0);
+        expect(Number(refetch.price)).toBe(8.0);
     });
 
     it('DELETE /books/:id removes book from DB', async () => {

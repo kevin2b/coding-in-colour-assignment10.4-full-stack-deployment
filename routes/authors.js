@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // access to authors array
-const { Author } = require('../model/Author.js');
+const Author = require('../models/Author.js');
 
 /**
  * TODO: Use router to define all CRUD operations: 1- get all, 2- get by id, 3- post a new author, 4- update an author, and 5- delete an author.
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {   //  Add a new author
     }
 
     const author = await Author.create({
-      name
+      name: name.trim()
     });
 
     res.status(201).json(author);
@@ -69,7 +69,7 @@ router.put('/:id', async (req, res) => { // Update a author by ID
       return res.status(404).json({"error": "id not found"});
     }
 
-    author.name = name;
+    author.name = name.trim();
     await author.save()
 
     return res.status(200).json(author);

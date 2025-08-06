@@ -2,10 +2,11 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const cors = require('cors');
-const sequelize = require('./config/db.js');
+const {sequelize} = require('./config/db.js');
 // add necessary imports below: Morgan and endPointNotFound
 const morgan = require('morgan');
 const {endPointNotFound} = require('./utils/middlewares.js');
+const dotenv = require('dotenv').config();
 
 // Enable CORS for all routes and methods
 app.use(cors());
@@ -55,12 +56,14 @@ async function init() { // async for future additions below
     return;
   }
 
-  try{
-    await sequelize.sync({ force: true });
-    console.log('Models (re)created!');
-  } catch (error) {
-    console.error('Unable to sync database:', error);
-    return;
+  if (process.env.TESTING !== "TRUE"){
+    try{
+      await sequelize.sync({ force: true });
+      console.log('Models (re)created!');
+    } catch (error) {
+      console.error('Unable to sync database:', error);
+      return;
+    }
   }
 
   if (require.main === module) {

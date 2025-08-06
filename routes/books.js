@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 // access to books and authors arrays. You will need to use both here.
-const { books, authors, getAndUpdateNextBookId } = require('../data/data');
-
+const Book = require('../models/Book.js');
+const Author = require('../models/Author.js');
+const ANONYMOUS_AUTHOR_ID = 999;
 // The first get method is provided below.
-router.get('/', (req, res) => { // Get all books
+router.get('/', async (req, res) => { // Get all books
   try {
+    const books = await Book.findAll();
     res.status(200).json(books);
   } catch (error) {
     res.sendStatus(500);
@@ -26,10 +28,10 @@ router.get('/', (req, res) => { // Get all books
  *  Should return 200 on successful get, 404 if book not found and 500 on error.
  * 
  */
-router.get('/:id', (req, res) => { // Get one book by ID
+router.get('/:id', async (req, res) => { // Get one book by ID
   try {
     // TODO.. 
-    const book = books.find((book) => book.id.toString() === req.params.id);
+    const book = await Book.findByPk(req.params.id);
     if (!book){
       return res.status(404).json({"error": "Book Not Found"});
     }
@@ -51,25 +53,23 @@ router.get('/:id', (req, res) => { // Get one book by ID
 *
 *     Should return 201 on successful post, and 500 on error.
 */
-router.post('/', (req, res) => {   //  Add a new book
+router.post('/', async (req, res) => {   //  Add a new book
   try {
     // TODO.. 
-    const name = req.body.name;
-    const price = req.body.price;
-    const author_id = authors.some((author)=>{return req.body.author_id === author.id.toString()})? Number(req.body.author_id): 99;
+    const { name, price, author_id } = req.body;
 
     //This is only basic check and does not account for NaN
     if (!name|| !name.trim() || price === undefined || price === null || price === ""){
       return res.status(400).json({"error": "Name or price missing"});
     }
 
-    const book = {
-      id: getAndUpdateNextBookId(),
-      name,
+    const author = await Author.findByPk(author_id);
+    const book = await Book.create({
+      name: name.trim(),
       price,
-      author_id
-    }
-    books.push(book);
+      author_id: author ? author_id: ANONYMOUS_AUTHOR_ID
+    });
+
     res.status(201).json(book);
   } catch (error) {
     // TODO.. 
@@ -82,30 +82,38 @@ router.post('/', (req, res) => {   //  Add a new book
  * 
  *    Should return 200 on successful put, and 500 on error.
  */
-router.put('/:id', (req, res) => { // Update a book by ID
+router.put('/:id', async (req, res) => { // Update a book by ID, this seem to be PATCH rather than PUT
   try {
     // TODO.. 
-    const name = req.body.name;
-    const price = req.body.price;
-    const author_id = authors.some((author)=>{return req.body.author_id === author.id.toString()})? Number(req.body.author_id): 99;
-    const id = Number(req.params.id);
-    if(!books.some(book => book.id === id)){
+    const { name, price, author_id } = req.body;
+    const id = req.params.id;
+
+    //This is only basic check
+    if ((!name|| !name.trim()) && (price === undefined || price === null || price === "") &&
+      (author_id === undefined || author_id === null || author_id === "")){
+      return res.status(400).json({"error": "No field entered"});
+    }
+
+    const book = await Book.findByPk(id);
+    if(!book){
       return res.status(404).json({"error": "id not found"});
     }
 
-    //This is only basic check
-    if (!name|| !name.trim() || price === undefined || price === null || price === ""){
-      return res.status(400).json({"error": "Name or price missing"});
+    let curr_author_id = book.author_id;
+    if (author_id){
+      const author = await Author.findByPk(author_id);
+      if (author){
+        curr_author_id = author_id;
+      }
+      else{
+        curr_author_id = ANONYMOUS_AUTHOR_ID;
+      }
     }
-
-    const newBook = {
-      id,
-      name,
-      price,
-      author_id
-    }
-    books[books.findIndex((book) =>  book.id === newBook.id)] = newBook;
-    return res.status(200).json(newBook);
+    book.price = (price !== undefined && price !== null && price !== "") ? price : book.price;
+    book.name = name ? name.trim(): book.name;
+    book.author_id = curr_author_id;
+    await book.save();
+    return res.status(200).json(book);
   } catch (error) {
     // TODO.. 
     return res.status(500).json({"error": "Internal Server Error"});
@@ -117,14 +125,14 @@ router.put('/:id', (req, res) => { // Update a book by ID
  *    
  *    Should return 204 on successful delete, and 500 on error.
  */
-router.delete('/:id', (req, res) => { // Delete a book by ID
+router.delete('/:id', async (req, res) => { // Delete a book by ID
   try {
     // TODO.. 
-    const id = Number(req.params.id);
-    if(!books.some(book => book.id === id)){
+    const id = req.params.id;
+    const deleted = await Book.destroy({ where: { id } })
+    if(deleted === 0){
       return res.status(404).json({"error": "id not found"});
     }
-    books.splice(books.findIndex((book) =>  book.id === id), 1);
     return res.status(204).end();
   } catch (error) {
     // TODO.. 

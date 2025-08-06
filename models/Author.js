@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db.js');
+const {sequelize} = require('../config/db.js');
 
 const Author = sequelize.define('Author', {
   id: {
@@ -16,4 +16,4 @@ const Author = sequelize.define('Author', {
   timestamps: false,
 });
 
-module.exports = {Author};
+module.exports = Author;
