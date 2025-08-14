@@ -10,17 +10,17 @@ Content-Type: application/json
 {
   "name": "Test",
   "price": "10",
-  "author_id": "7z"
+  "author_id": "7"
 }
 
 ###
-PUT http://localhost:3000/books/5
+PUT http://localhost:3000/books/1
 Content-Type: application/json
 
 {
   "name": "Test",
   "price": "2",
-  "author_id": "3"
+  "author_id": "1"
 }
 
 ###

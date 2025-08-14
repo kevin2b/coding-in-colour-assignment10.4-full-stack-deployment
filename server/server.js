@@ -7,6 +7,7 @@ const {sequelize} = require('./config/db.js');
 const morgan = require('morgan');
 const {endPointNotFound} = require('./utils/middlewares.js');
 const dotenv = require('dotenv').config();
+const Author = require('./models/Author.js');
 
 // Enable CORS for all routes and methods
 app.use(cors());
@@ -64,6 +65,17 @@ async function init() { // async for future additions below
       console.error('Unable to sync database:', error);
       return;
     }
+  }
+
+  try{
+    await Author.findOrCreate({
+      where: { id: 999 },
+      defaults: { name: 'Anonymous' }
+    });
+    console.log('Add anonymous author');
+  } catch (error) {
+    console.error('Unable to create default author:', error);
+    return;
   }
 
   if (require.main === module) {

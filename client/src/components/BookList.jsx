@@ -8,10 +8,13 @@ export default function BookList({ onSelect }) {
     useEffect(() => {
         // TODO: Load books from the server
         // getBooks().then(setBooks);
+        getBooks().then((books) => {setBooks(books)})
     }, []);
 
     const handleDelete = async (id) => {
         // TODO: Call deleteBook and update state
+        await deleteBook(id);
+        setBooks((books) => books.filter((book)=>{return book.id!==id}))
     };
 
     return (
